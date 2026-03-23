@@ -16,7 +16,7 @@ Você vai precisar ter instalado:
 
 Clonar o repositório:
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/belluzi/BibliotecaApi.git
 cd BibliotecaApi
 ```
 
