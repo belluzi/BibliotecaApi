@@ -35,7 +35,7 @@ Executar:
 dotnet run
 ```
 
-Depois de iniciar, acesse em `http://localhost:5023` ou veja a documentação em `http://localhost:5023/swagger`
+Depois de iniciar, acesse e veja a documentação em `http://localhost:5023/swagger`
 
 ---
 
