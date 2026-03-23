@@ -22,7 +22,7 @@ public class DevolverEmprestimoUC
             if (emprestimo.DataDevolucao != null)
                 throw new Exception("Este empréstimo já foi devolvido.");
 
-            emprestimo.RegistrarDevolucao();
+            emprestimo.RegistrarDevolucao(input.DataDevolucao);
 
             await _emprestimoRepository.Atualizar(emprestimo);
 

@@ -31,9 +31,9 @@ public class EmprestimoEntity
         Valor = 5.00m; 
     }
 
-    public void RegistrarDevolucao()
+    public void RegistrarDevolucao(DateTime dataDevolucao)
     {
-        DataDevolucao = DateTime.Now;
+        DataDevolucao = dataDevolucao;
         Multa = CalcularMulta();
         Total = Valor + Multa;
     }
@@ -42,10 +42,24 @@ public class EmprestimoEntity
     {
         if (DataDevolucao == null)
             throw new Exception("Empréstimo ainda não devolvido.");
-        
+
+        if (DataDevolucao.Value <= DataPrevistaDevolucao)
+            return 0.00m;
+
         TimeSpan atraso = DataDevolucao.Value - DataPrevistaDevolucao;
-        decimal valorMulta = (decimal)atraso.Days * 2.00m; // Exemplo: R$2,00 por dia de atraso
-        return valorMulta;
+        int diasAtraso = atraso.Days;
+        decimal valorMulta = 0.00m;
+
+        int faixaInicialMulta = Math.Min(diasAtraso, 3);
+        valorMulta += faixaInicialMulta * 2.00m;
+
+        if (diasAtraso > 3)
+        {
+            int faixaSecundariaMulta = diasAtraso - 3;
+            valorMulta += faixaSecundariaMulta * 3.50m;
+        }
+
+        return Math.Min(valorMulta, 50.00m);
         
     }
 }

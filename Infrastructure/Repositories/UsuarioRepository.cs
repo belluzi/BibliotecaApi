@@ -30,4 +30,15 @@ public class UsuarioRepository
             return result;
         }
     }
+
+    public async Task<bool> CpfExistente(string cpf)
+    {
+        const string sql = "SELECT COUNT(1) FROM Usuarios WHERE cpf = @cpf";
+        
+        using (var connection = _session.Connection)
+        {
+            var count = await _session.Connection.ExecuteScalarAsync<int>(sql, new { cpf });
+            return count > 0;
+        }
+    }
 }
