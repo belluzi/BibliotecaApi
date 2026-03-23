@@ -14,6 +14,14 @@ public class CadastrarUsuarioUC
         try
         {
             _usuario.Cadastrar(input.Nome, input.CPF, input.Email);
+
+            var cpfExistente = await _repository.CpfExistente(input.CPF);
+
+            if (cpfExistente)
+            {
+                throw new Exception("Usuário com este CPF já está cadastrado.");
+            }
+
             int idNovoUsuario = await _repository.Cadastrar(_usuario);
             return idNovoUsuario;
         }

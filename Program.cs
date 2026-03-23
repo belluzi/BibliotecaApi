@@ -1,4 +1,6 @@
 using MinimalApplication.Infrastructure.IOC;
+using BibliotecaApi.Infrastructure.Middleware;
+using Microsoft.OpenApi.Models;
 // Ensure the SQLitePCLRaw.bundle_green package is installed in your project.
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Biblioteca API",
         Version = "v1"
@@ -20,13 +22,28 @@ builder.Services.AddSwaggerGen(c =>
     //{
     //    OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0
     //};
-}); ;
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Insira o token JWT desta maneira: Bearer {seu_token}"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddInfrastructure(builder.Configuration);
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -37,9 +54,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<AuthenticationMiddleware>();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

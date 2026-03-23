@@ -16,6 +16,20 @@ public class CadastrarEmprestimoUC
             var emprestimo = new EmprestimoEntity();
             emprestimo.Cadastrar(input.IdUsuario, input.IdLivro, input.DataPrevistaDevolucao);
 
+            bool livroDisponivel = await _emprestimoRepository.LivroDisponivel(input.IdLivro);
+
+            if (!livroDisponivel)
+            {
+                throw new Exception("Este livro já está emprestado e ainda não foi devolvido.");
+            }
+
+            bool usuarioAtrasado = await _emprestimoRepository.UsuarioPossuiEmprestimoAtrasadoAsync(input.IdUsuario);
+
+            if (usuarioAtrasado)
+            {
+                throw new Exception("Usuário com empréstimo em atraso não pode realizar novo empréstimo.");
+            }
+
             int idEmprestimo = await _emprestimoRepository.Cadastrar(emprestimo);
 
             // Marca o livro como indisponível

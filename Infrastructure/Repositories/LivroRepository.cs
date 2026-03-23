@@ -40,4 +40,20 @@ public class LivroRepository
         await _session.Connection.ExecuteAsync(sql, new { id = idLivro });
     }
 
+    public async Task<IEnumerable<LivroEntity>> ListarTodosAsync()
+    {
+        const string sql = @"
+            SELECT id Id, 
+            titulo Titulo, 
+            autor Autor, 
+            isbn ISBN 
+            FROM Livros
+        ";
+
+        using (var connection = _session.Connection)
+        {
+            return await connection.QueryAsync<LivroEntity>(sql);
+        }
+    }
+
 }
