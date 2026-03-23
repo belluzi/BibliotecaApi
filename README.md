@@ -10,13 +10,13 @@ Uma API REST para gerenciamento de bibliotecas, desenvolvida com ASP.NET Core 8.
 
 Você vai precisar ter instalado:
 - **.NET 8 SDK** ou superior ([baixar aqui](https://dotnet.microsoft.com/download/dotnet/8.0))
-- Um editor (VS Code, Visual Studio, etc) - opcional mas recomendado
+- Um editor (VS Code, Visual Studio, etc) - opcional, mas recomendado
 
 ### Instalação
 
 Clonar o repositório:
 ```bash
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/belluzi/BibliotecaApi.git
 cd BibliotecaApi
 ```
 
@@ -545,7 +545,7 @@ BibliotecaApi/
 
 ### Estratégia de Autenticação
 
-A API utiliza **JWT Bearer Token** com autenticação baseada em **credenciais hardcoded (seed)**.
+A API utiliza **JWT Bearer Token** com autenticação baseada em **credenciais (seed)**.
 
 #### 1️⃣ Autenticação com Credenciais (Seed)
 
@@ -622,7 +622,7 @@ Veja o arquivo `BibliotecaApi.http` para exemplos de requisições prontas para 
 
 ## 📝 Notas Importantes
 
-1. **Token JWT**: O token expira em 60 minutos. Após expirar, será necessário gerar um novo tokens.
+1. **Token JWT**: O token expira em 60 minutos. Após expirar, será necessário gerar um novo token.
 
 2. **Rotas Públicas**: 
    - `POST /Auth/generate-token`

@@ -1,16 +1,18 @@
 @hostname = http://localhost:5023
-@token = COLE_O_TOKEN_RETORNADO_AQUI
 
-### TASK 8: AUTHENTICATION (Gerar Token - Executar Primeiro!)
+### TASK 8: AUTHENTICATION (Gerar Token - Executar Primeiro)
+# @name login
 POST {{hostname}}/Auth/generate-token
 Content-Type: application/json
 
 { "email": "admin@teste.com", "senha": "bibliotecaapiteste" }
+###
+@authToken = {{login.response.body.conteudo}}
 
 ### TASK 1: VALIDAR CPF (Feature)
 # Teste: Tentar cadastrar CPF que já existe no banco
 POST {{hostname}}/Usuario/Cadastrar
-Authorization: Bearer {{token}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 { "nome": "Repetido", "cpf": "12345678901", "email": "repetido@teste.com" }
@@ -18,43 +20,86 @@ Content-Type: application/json
 ### TASK 2: VALIDAR ISBN (Feature)
 # Tentar cadastrar livro com ISBN inválido (deve falhar)
 POST {{hostname}}/Livro/Cadastrar
-Authorization: Bearer {{token}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 { "titulo": "Teste ISBN", "autor": "Autor Teste", "isbn": "12345" }
 
 ### TASK 3: BUG MULTA NO PRAZO (Bugfix)
 # Devolver um livro no prazo (deve retornar multa R$ 0,00)
-POST {{hostname}}/Emprestimo/Devolver
-Authorization: Bearer {{token}}
+
+# Criando um novo registro de livro
+POST {{hostname}}/Livro/Cadastrar
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
-{ "idEmprestimo": 1, "dataDevolucao": "2026-03-23" }
+{ "titulo": "Teste Devolucao no Prazo", "autor": "Autor Teste", "isbn": "1234567890123" }
+
+### Criando um novo usuário para o teste
+POST {{hostname}}/Usuario/Cadastrar
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{ "nome": "Teste Devolução no Prazo", "cpf": "33333333333", "email": "teste@teste.com" }
+
+### Criando um novo registro de empréstimo
+POST {{hostname}}/Emprestimo/Cadastrar
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{ "idUsuario": 1, "idLivro": 1, "dataPrevistaDevolucao": "2026-04-28" }
+
+### Testando a devolução no prazo
+POST {{hostname}}/Emprestimo/Devolver
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{ "idEmprestimo": 1, "dataDevolucao": "2026-04-25" }
 
 ### TASK 4: LIVRO JÁ EMPRESTADO (Bugfix)
-# Tentar emprestar um livro que já está emprestado
 POST {{hostname}}/Emprestimo/Cadastrar
-Authorization: Bearer {{token}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
-{ "idUsuario": 1, "idLivro": 1, "dataPrevistaDevolucao": "2026-04-23" }
+{ "idUsuario": 1, "idLivro": 1, "dataPrevistaDevolucao": "2026-04-28" }
+
+### Tentar emprestar um livro que já está emprestado
+POST {{hostname}}/Emprestimo/Cadastrar
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{ "idUsuario": 2, "idLivro": 1, "dataPrevistaDevolucao": "2026-04-25" }
 
 ### TASK 5: LISTAR LIVROS (Feature)
-# Rota pública - sem autenticação
+# Rota pública
 GET {{hostname}}/Livro/Listar
 
 ### TASK 6: USUÁRIO COM ATRASO (Feature)
-# Tentar novo empréstimo com usuário que tem atraso
+# Criar um empréstimo pro usuário
 POST {{hostname}}/Emprestimo/Cadastrar
-Authorization: Bearer {{token}}
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
-{ "idUsuario": 2, "idLivro": 2, "dataPrevistaDevolucao": "2026-03-28" }
+{ "idUsuario": 2, "idLivro": 1, "dataPrevistaDevolucao": "2026-03-22" }
+
+### Tentar novo empréstimo com usuário que tem atraso
+POST {{hostname}}/Emprestimo/Cadastrar
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{ "idUsuario": 2, "idLivro": 2, "dataPrevistaDevolucao": "2026-03-27" }
 
 ### TASK 7: REGRA DE MULTA ESCALONADA (Feature)
 # Devolver com atraso para testar cálculo escalonado
-POST {{hostname}}/Emprestimo/Devolver
-Authorization: Bearer {{token}}
+POST {{hostname}}/Emprestimo/Cadastrar
+Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
-{ "idEmprestimo": 2, "dataDevolucao": "2026-04-02" }
+{ "idUsuario": 3, "idLivro": 3, "dataPrevistaDevolucao": "2026-03-23" }
+
+### Devolver com 5 dias de atraso (deve calcular multa escalonada)
+POST {{hostname}}/Emprestimo/Devolver
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{ "idEmprestimo": 2, "dataDevolucao": "2026-03-28" }
