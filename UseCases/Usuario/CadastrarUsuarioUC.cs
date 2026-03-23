@@ -27,7 +27,7 @@ public class CadastrarUsuarioUC
         }
         catch (Exception ex)
         {
-            throw new Exception("Erro ao cadastrar usuário: " + ex.Message);
+            throw new Exception(ex.Message);
         }
     }
 }
