@@ -1,7 +1,7 @@
 @hostname = http://localhost:5023
 @token = COLE_O_TOKEN_RETORNADO_AQUI
 
-### TASK 8: AUTHENTICATION (Gerar Token - Executar Primeiro!)
+### TASK 8: AUTHENTICATION (Gerar Token - Executar Primeiro)
 POST {{hostname}}/Auth/generate-token
 Content-Type: application/json
 
@@ -40,7 +40,7 @@ Content-Type: application/json
 { "idUsuario": 1, "idLivro": 1, "dataPrevistaDevolucao": "2026-04-23" }
 
 ### TASK 5: LISTAR LIVROS (Feature)
-# Rota pública - sem autenticação
+# Rota pública
 GET {{hostname}}/Livro/Listar
 
 ### TASK 6: USUÁRIO COM ATRASO (Feature)
